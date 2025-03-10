@@ -3,6 +3,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import consumersApi.src.WeatherConsumer;
+import api.src.weather.WeatherService;
 
 public class ConsumerActivator implements BundleActivator {
     public void start(BundleContext context) {
