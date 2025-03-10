@@ -1,4 +1,5 @@
 package consumers.consumer2.src;
+import api.src.weather.WeatherService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
