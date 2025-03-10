@@ -1,0 +1,91 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'com.weather.osgi'
+version = '1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.osgi:osgi.core:6.0.0'
+    implementation 'org.apache.felix:org.apache.felix.framework:7.0.5'
+}
+
+
+// Compile Java
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+// Task to create API JAR
+task apiJar(type: Jar) {
+    archiveBaseName.set("api")
+    from sourceSets.main.output
+    include("weather/WeatherService.class")
+    manifest {
+        attributes(
+                "Bundle-Name": "Weather API",
+                "Bundle-SymbolicName": "weather.api",
+                "Bundle-Version": version,
+                "Export-Package": "weather"
+        )
+    }
+    from sourceSets.main.output
+}
+
+// Task to create Consumers API JAR
+task consumersApiJar(type: Jar) {
+    archiveBaseName.set("consumers-api")
+    from sourceSets.main.output
+    include("weather/WeatherConsumer.class")
+    manifest {
+        attributes(
+                "Bundle-Name": "Weather Consumer API",
+                "Bundle-SymbolicName": "weather.consumer.api",
+                "Bundle-Version": version,
+                "Export-Package": "weather"
+        )
+    }
+    from sourceSets.main.output
+}
+
+// Task to create producer JARs
+task producerJars(type: Jar) {
+    archiveBaseName.set("producers")
+    from sourceSets.main.output
+    include("weather/producer*/**")
+    manifest {
+        attributes(
+                "Bundle-Name": "Weather Producers",
+                "Bundle-SymbolicName": "weather.producers",
+                "Bundle-Version": version,
+                "Import-Package": "weather"
+        )
+    }
+    from sourceSets.main.output
+}
+
+// Task to create consumer JARs
+task consumerJars(type: Jar) {
+    archiveBaseName.set("consumers")
+    from sourceSets.main.output
+    include("weather/consumer*/**")
+    manifest {
+        attributes(
+                "Bundle-Name": "Weather Consumers",
+                "Bundle-SymbolicName": "weather.consumers",
+                "Bundle-Version": version,
+                "Import-Package": "weather"
+        )
+    }
+    from sourceSets.main.output
+}
+
+// Build all JARs
+tasks.register("buildAll") {
+    dependsOn(apiJar, consumersApiJar, producerJars, consumerJars)
+}
